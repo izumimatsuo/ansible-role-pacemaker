@@ -1,4 +1,4 @@
-# ansible-role-pacemaker
+# ansible-role-pacemaker [![Build Status](https://www.travis-ci.com/izumimatsuo/ansible-role-pacemaker.svg?branch=main)](https://www.travis-ci.com/izumimatsuo/ansible-role-pacemaker)
 
 CentOS 7 に pacemaker を導入する ansible role です。
 
