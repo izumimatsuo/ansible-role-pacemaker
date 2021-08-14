@@ -2,5 +2,5 @@
 # defaults file for ansible-role-pacemaker
 
 pacemaker_cluster_name: 'hacluster'
-pacemaker_cluster_hosts: "{{ ansible_play_hosts }}"
+pacemaker_cluster_hosts:  # ['addr1,...', 'addr2,...']
 pacemaker_cluster_auth_password: 'password'
