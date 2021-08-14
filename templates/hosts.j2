@@ -1,7 +1,7 @@
 127.0.0.1   localhost
 
 {% for host in ansible_play_hosts %}
-{{ hostvars[host].ansible_host }}   {{ host }}
+{{ pacemaker_cluster_hosts[loop.index0] | regex_replace(',\\d{1,3}(\\.\\d{1,3}){3}','') if pacemaker_cluster_hosts[loop.index0] is defined else hostvars[host].ansible_host }}    {{ host }}
 {% endfor %}
 
 # The following lines are desirable for IPv6 capable hosts
