@@ -14,6 +14,12 @@
       - corosync
       - pcs
 
+- name: install vipcheck module
+  get_url:
+    url: https://dotsrc.dl.osdn.net/osdn/linux-ha/45456/VIPcheck
+    dest: /usr/lib/ocf/resource.d/heartbeat/VIPcheck
+    mode: 0755
+
 - name: start pcsd service
   service:
     name: pcsd
@@ -25,17 +31,13 @@
     name: hacluster
     password: "{{ pacemaker_cluster_auth_password | password_hash('sha512', pacemaker_cluster_auth_password) }}"
 
-- name: detect corosync.conf
-  stat:
-    path: /etc/corosync/corosync.conf
-  register: corosync_conf
-
 - name: auth cluster nodes
-  command: "pcs cluster auth -u hacluster -p {{ pacemaker_cluster_auth_password }} {{ pacemaker_cluster_hosts | join(' ') | replace(',',' ') }}"
-  when: not corosync_conf.stat.exists
+  command: "pcs cluster auth -u hacluster -p {{ pacemaker_cluster_auth_password }} {{ ansible_play_hosts | join(' ') }} --force"
+  args:
+    creates: /etc/corosync/corosync.conf
 
 - name: setup cluster
-  command: "pcs cluster setup --name {{ pacemaker_cluster_name }} {{ pacemaker_cluster_hosts | join(' ') }}"
+  command: "pcs cluster setup --name {{ pacemaker_cluster_name }} {{ ansible_play_hosts | zip(pacemaker_cluster_hosts) | flatten | join(' ') | regex_replace('\\s\\d{1,3}(\\.\\d{1,3}){3}','') if pacemaker_cluster_hosts != None else ansible_play_hosts | join(' ') }} --force"
   args:
     creates: /etc/corosync/corosync.conf
 
